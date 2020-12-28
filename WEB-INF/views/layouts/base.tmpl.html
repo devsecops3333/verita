@@ -1,0 +1,41 @@
+<div>
+	<div class="row">
+		<div ng-include src="'views/app/header/header.html'"></div>
+	</div>
+	<div id="wrapper" class="active">
+		<div class="row">
+			<div>
+				<div ui-view="side"></div>
+			</div>
+			<div>
+				<div id="ribbon" class="hidden-print">
+					<a class="btn-ribbon" ng-click="showDefultMenu()"> <i
+						class="fa fa-home" title="Home"></i>
+					</a> <span class="vertical-devider">&nbsp;</span> <a
+						class="btn-ribbon hyperLink" ng-click="reLoadCurrentState()">
+						<i class="fa fa-refresh" title="Refresh"></i>
+					</a> <span class="vertical-devider">&nbsp;</span> <a
+						ng-show="{{data.displayName != 'Doodah'}}" class="btn-ribbon"
+						data-toggle1="modal" data-target1="#slideShowModal"
+						ng-click="getSlideWidgets()"> <i class="fa fa-slideshare"
+						title="Slide show"></i>
+					</a><span class="vertical-devider">&nbsp;</span> <a class="btn-ribbon"
+						ng-click="showDownloadOptions()"><i class="fa fa-download"
+						title="Export"></i></a>
+					<ui-breadcrumbs displayname-property="data.displayName"></ui-breadcrumbs>
+				</div>
+				<div ui-view="main"></div>
+			</div>
+		</div>
+	</div>
+	<div ng-include src="'views/app/SlideShow/WidgetSlideShow.html'"></div>
+	<div class="row">
+		<footer>
+			<span class="dark_grey_9">Copyright &#169 2018, Independent
+				Software Testing Services Company | Cigniti Technologies, All rights
+				reserved</span>
+		</footer>
+	</div>
+</div>
+
+

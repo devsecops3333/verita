@@ -1,0 +1,211 @@
+<style>
+body.dragging, body.dragging * {
+	cursor: move !important;
+}
+
+.dragged {
+	position: absolute;
+	opacity: 0.5;
+	z-index: 2000;
+}
+
+.btn-group>.btn {
+	width: 71% !important;
+}
+
+.multiselect-container {
+	height: 200px;
+	overflow: auto;
+}
+</style>
+<div ng-controller="headerController as head">
+	<div class="row devHeader">
+		<div align="left" class="col-md-1 col-sm-1 col-xs-2 devlogo">
+			<img src="views/assets/images/logo1.png" class="img-responsive">
+		</div>
+
+		<div class="col-md-2 col-sm-2 col-xs-2">
+			<a id="menu-toggle-4"> <i class="fa fa-bars"></i>
+			</a>
+			<h3 class="devtitle">Verita</h3>
+		</div>
+		<div class="col-md-7 col-sm-7 col-xs-4" style="padding: 0px;">
+			<h3 class="top_heading">
+
+				<i class="fa fa-globe" aria-hidden="true"></i> {{domainName}} &nbsp;
+				|&nbsp; <i class="fa fa-suitcase" aria-hidden="true"></i> <select
+					class="project-DropDown" name="projects" ng-model="selectedProj"
+					ng-options="key as value for (key , value) in plist"
+					ng-change="projChange()">
+				</select> |&nbsp; <i class="fa fa-th-large" aria-hidden="true"></i> <select
+					class="project-DropDown" name="themes" ng-model="themeName"
+					ng-change="themeChange()">
+					<option ng-repeat="item in themeArray" value="{{item.id}}">{{item.name}}</option>
+				</select>
+			</h3>
+		</div>
+
+		<div class="col-md-2 col-sm-2 col-xs-4" style="padding: 0px">
+			<div class="dropdown">
+
+				<button class="btn-primary user_profile dropdown-toggle "
+					type="button" data-toggle="dropdown" data-toggle="tooltip"
+					title="{{firstName}}">
+					<img class="profile_pic" src="{{userImg}}">&nbsp;&nbsp;
+					{{firstName}} <i class="fa fa-angle-down" aria-hidden="true"></i> <label
+						style="font-size: 11px; font-weight: 400; margin-bottom: 0px;">Last
+						Login : {{loginTime}}</label>
+				</button>
+				<ul class="dropdown-menu">
+
+					<li><a ui-sref="profile" class="profile_a"><i
+							class="fa fa-user"></i> &nbsp;&nbsp;Profile</a></li>
+					<!-- <li ng-click="downLoad()" class="hyperLink"><a><i
+							class="fa fa-download"></i>&nbsp;&nbsp;Download</a></li> -->
+					<li class="divider"></li>
+					<li class="hyperLink"><a ng-click="logout()"> <i
+							class="fa fa-sign-out"></i> &nbsp;&nbsp;Log out
+					</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="errorProject" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Problem loading project</h4>
+				</div>
+				<div class="modal-body">{{errorMessage}}</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="downloadmodal" tabindex="-1" role="dialog"
+		aria-labelledby="downloadLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%;">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title colorWhite" id="downloadLabel">Export</h4>
+				</div>
+
+				<!-- Modal Body -->
+				<div class="modal-body">
+
+					<!-- <form class="form-horizontal" role="form"> -->
+					<div class="row form-horizontal" style="height: 300px;">
+						<div class="col-md-12">
+							<div class="row white_row">
+								<div class="col-md-6 mt10" style="">
+									<div class="col-sm-12 mt10">
+										<label class="control-label">Select Widget</label> <br> <select
+											multiple="multiple" id="widgets" ng-model="widgets"
+											class="form-control" name="widgets"
+											ng-change="getSelectedWidgetsForExport()">
+											<optgroup ng-repeat="menu in selectedmenuOptions"
+												label="{{menu.value}}" class="{{menu.value}}">
+												<option style="padding-left: 4px;"
+													ng-if="option.menuid === menu.key"
+													ng-repeat="option in widgetOptions"
+													value="{{option.value}}">{{option.key}}</option>
+											</optgroup>
+
+										</select>
+									</div>
+								</div>
+								<div class="col-md-6 mt10 slide_selected" style="">
+									<div class="col-sm-12 mt10">
+										<ol id="mdbWidgetOrder" style="width: 368px;">
+											<li class="dropbtn" ng-repeat=" opt1 in selectWids"
+												data-value="{{opt1.key}}"><i
+												class="fa fa-arrows mRight"></i>{{opt1.value}}</li>
+										</ol>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row form-horizontal">
+						<div class="col-sm-12 mt10" align="right">
+							<input ng-model="formatsHome" type="radio" name="downloadFormat"
+								value="PPT" checked> <label class="control-label">PPT</label>
+
+
+							&nbsp;&nbsp; <input ng-model="formatsHome" type="radio" name=""
+								disabled="disabled" value="PDF"> <label
+								class="control-label">PDF</label> &nbsp;&nbsp;
+
+
+							<p id="erroredittext" style="color: red; font-size: small;"></p>
+							<b> <span id='selAggr'></span>
+							</b> <span id='selAggrVal'></span>
+						</div>
+					</div>
+				</div>
+				<!-- </form> -->
+				<!-- Modal Footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Close</button>
+					<button type="button" class="btn btn-primary" id="saveBtn"
+						ng-click="preview()">Preview</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="previewmodal" tabindex="-1" role="dialog"
+		aria-labelledby="previewLabel" aria-hidden="true">
+		<div class="modal-dialog modal-previewlg">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title colorWhite" id="previewLabel">Preview</h4>
+					<div class="pptpopupHeader">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							ng-click="closePreview()">Back</button>
+						<button type="button" class="btn btn-primary" id="saveBtn"
+							ng-click="downloadPPTFile()">Download</button>
+					</div>
+				</div>
+				<!-- Modal Body -->
+				<div class="modal-body previewWidgetDivModelBody"
+					style="overflow: scroll; height: 480px;">
+					<div class="col-md-12 widgetDiv" id="previewWidgetDiv"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$("#menu-toggle").click(function(e) {
+		e.preventDefault();
+		$("#wrapper").toggleClass("active");
+	});
+
+	$(document).ready(function() {
+
+		$('#slidewidgets').multiselect({
+			buttonWidth : '400px',
+			includeSelectAllOption : true,
+			enableClickableOptGroups : true,
+			enableCollapsibleOptGroups : true
+
+		});
+	});
+</script>

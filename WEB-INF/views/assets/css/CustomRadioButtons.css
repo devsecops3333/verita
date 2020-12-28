@@ -1,0 +1,84 @@
+/*  Custom radio button with icons in doodah */
+#doodahId input[type=radio].radio-font {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+#doodahId input[type=radio].radio-font.fa ~ label:before {
+    font-family: FontAwesome;
+}
+#doodahId input[type=radio].radio-font.ft ~ label:before {
+    font-family: fontello;
+}
+
+#doodahId input[type=radio].radio-font ~ label:before {
+    display: inline-block;
+    letter-spacing: 10px;
+    font-size: 1.6em;
+    /* font-weight: normal; */
+    color: #999;
+    width: 1.4em;
+}
+
+#doodahId input[type=radio].radio-font.excel-font ~ label:before {
+    content: "\f1c3";
+}
+
+#doodahId input[type=radio].radio-font.sheet-font ~ label:before {
+    content: "\f0f6";
+}
+
+#doodahId input[type=radio].radio-font.csv-font ~ label:before {
+    content: "\e808";
+}
+
+#doodahId input[type=radio].radio-font.rest-font ~ label:before {
+    content: "\e809";
+}
+
+#doodahId input[type=radio].radio-font.standard-font ~ label:before {
+    content: "\e800";
+}
+
+#doodahId input[type=radio].radio-font.custom-font ~ label:before {
+    content: "\e801";
+}
+
+#doodahId input[type=radio].radio-font:checked ~ label:before  {
+    font-size: 1.6em;
+    color: #3f51b5;
+    letter-spacing: 10px;
+}
+
+#doodahId input[type=radio].radio-font:checked ~ label  {
+    color: #3f51b5;
+}
+
+#doodahId input[type=radio].radio-font:focus ~ label:before,
+#doodahId input[type=radio].radio-font:focus ~ label
+{                
+    color: #3f51b5;
+}
+
+ #doodahId input[type=radio].radio-font:hover ~ label:before,
+#doodahId input[type=radio].radio-font:hover ~ label
+{                
+    opacity: 0.8;
+    visibility: visible;
+}
+
+#doodahId input[type=radio].radio-font ~ label
+{                
+    visibility: hidden;
+}
+
+#doodahId input[type=radio].radio-font ~ label:before
+{                
+    visibility: visible;
+} 

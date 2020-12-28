@@ -1,0 +1,124 @@
+<style>
+body.dragging, body.dragging * {
+	cursor: move !important;
+}
+
+.dragged {
+	position: absolute;
+	opacity: 0.5;
+	z-index: 2000;
+}
+
+.btn-group>.btn {
+	width: 71% !important;
+}
+
+.multiselect-container {
+	height: 200px;
+	overflow: auto;
+}
+</style>
+
+<div ng-controller="WidgetSlideShowController as wdctrl">
+	<!-- Modal for Slide show -->
+
+	<div class="modal fade" id="slideshowmodal" tabindex="-1" role="dialog"
+		aria-labelledby="slideShowLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 65%;">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title colorWhite" id="slideshowLabel">Slide
+						Show</h4>
+				</div>
+
+				<!-- Modal Body -->
+				<div class="modal-body">
+
+					<!-- <form class="form-horizontal" role="form"> -->
+					<div class="row form-horizontal" style="height: 300px;">
+						<div class="col-md-12">
+							<div class="col-md-6">
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-12" style="height: 250px;">
+										<label class="control-label">Select Widget</label> <select
+											multiple="multiple" id="slidewidgets" ng-model="slidewidgets"
+											class="form-control" name="slidewidgets"
+											ng-change="getSelectedWidgets()">
+											<optgroup ng-repeat="menu in selectedmenuOptions"
+												label="{{menu.value}}" class="{{menu.value}}"
+												id="{{menu.value}}">
+												<option style="padding-left: 4px;"
+													ng-if="option.menuid === menu.key"
+													ng-repeat="option in widgetOptions"
+													value="{{option.value}}">{{option.key}}</option>
+											</optgroup>
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="row white_row">
+								<div class="col-md-6 mt10 slide_selected" style="">
+									<div class="col-sm-12 mt10">
+										<label class="control-label" id="dummyText" style=""></label>
+										<div class="col-sm-9">
+											<ol id="slideWidgetOrder" style="width: 368px;">
+												<li class="dropbtn" ng-repeat=" opt1 in selectWids"
+													data-value="{{opt1.key}}"><i
+													class="fa fa-arrows mRight"></i>{{opt1.value}}</li>
+											</ol>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 mt10" align="right">
+								<label class="control-label">Set Timer(in Sec):</label> &nbsp; <input
+									ng-model="timer" id="slideTime" type="number" min=3
+									name="slideTimer" required>
+							</div>
+							<p id="errortext" style="color: red; font-size: small;"></p>
+						</div>
+						<!-- </form> -->
+					</div>
+				</div>
+				<!-- Modal Footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Close</button>
+					<button type="button" class="btn btn-primary" id="saveBtn"
+						ng-click="previewSlideShow()">Start</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End -->
+
+	<div class="SlideShowPanel panel">
+		<div class="slideshowPanel-body">
+			<div class="row graphWell bTop" align="center"></div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	$(document).ready(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+
+		$('#slidewidgets').multiselect({
+			buttonWidth : '400px',
+			includeSelectAllOption : true,
+			enableClickableOptGroups : true,
+			enableCollapsibleOptGroups : true
+
+		});
+	});
+</script>
+<script type="text/javascript" src="views/lib/dc/d3.js"></script>
+<script type="text/javascript" src="views/lib/dc/crossfilter.js"></script>
+<script type="text/javascript" src="views/lib/dc/dc-gazal.js"></script>
+<script type='text/javascript' src='views/lib/common/reductio.min.js'></script>

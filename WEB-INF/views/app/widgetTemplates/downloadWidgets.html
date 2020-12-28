@@ -1,0 +1,24 @@
+<div ng-controller="DownloadWidgetsController as dctrl">
+	<div class="DownloadPanel panel">
+		
+		<div class="downloadPanel-body">
+
+			<div class="row graphWell bTop" align="center">
+				
+				<div class="downloadChart" id="previewcontainer">					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+</script>
+<script type="text/javascript" src="views/lib/dc/d3.js"></script>
+<script type="text/javascript"
+	src="views/lib/dc/crossfilter.js"></script>
+<script type="text/javascript" src="views/lib/dc/dc-gazal.js"></script>
+<script type='text/javascript'
+	src='views/lib/common/reductio.min.js'></script>

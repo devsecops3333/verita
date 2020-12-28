@@ -1,0 +1,50 @@
+
+<div ng-init="slideOnclick()">
+	<div id="sidebar-wrapper" ng-if="leftMenu != '' ">
+		<ul class="sidebar-nav" id="sidebar">
+			<li><img src="views/assets/images/blueswan.png"
+				class="img-responsive sideImg"></li>
+			<li ng-repeat="menu in leftMenu"
+				ng-click="selectedMenu(menu.menuId,menu.menuLink)"
+				id="{{menu.menuId}}"
+				ng-class="{menu_active: isActiveMenu('/{{menu.menuId}}', '/{{menu.menuLink}}')}">
+				<a> <i class="sub_icon_left fa {{menu.menuIcon}} menu-item-icon"></i><span>{{menu.menuName}}</span></a>
+			</li>
+
+			<li ng-class="{menu_active: isActiveMenu('','/Mydashboard')}"><a
+				ui-sref="Mydashboard"> <i
+					class="sub_icon fa fa-tachometer menu-item-icon"></i><span>My
+						Dashboard</span>
+			</a></li>
+			<li ng-class="{menu_active: isActiveMenu('','/reports')}"><a
+				ui-sref="reports"> <i
+					class="sub_icon fa fa-area-chart menu-item-icon"></i> <span>Doodah</span>
+			</a></li>
+
+		</ul>
+	</div>
+
+	<div id="rightsidebar-wrapper" ng-if="rightMenu != '' ">
+		<ul class="sidebar-nav" id="rightsidebar">
+			<li><img ng-src="{{projectImg}}" class="img-responsive sideImg"></li>
+			<li ng-repeat="menu in rightMenu"
+				ng-click="selectedMenu(menu.menuId,menu.menuLink)"
+				id="{{menu.menuId}}"
+				ng-class="{menu_active: isActiveMenu('/{{menu.menuId}}')}"
+				name="rightSide"><a><i
+					class="sub_icon_right fa {{menu.menuIcon}} menu-item-icon"></i> <span>{{menu.menuName}}</span>
+			</a></li>
+		</ul>
+	</div>
+</div>
+<script>
+	$('#rightsidebar-wrapper').BootSideMenu({
+		side : "right",
+		autoClose : false
+	});
+	$('#sidebar-wrapper').BootSideMenu({
+		side : "left",
+		autoClose : false
+	});
+</script>
+

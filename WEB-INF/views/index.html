@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html ng-app="mainApp" ng-controller="appController as app">
+<head>
+<style>
+@charset "UTF-8";
+</style>
+
+<link rel="icon" href="views/assets/images/Verita.png">
+<link
+	href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,700,900'
+	rel='stylesheet' type='text/css'>
+<title>Verita</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="cache-control"
+	content="no-cache, must-revalidate, post-check=0, pre-check=0">
+<meta http-equiv="pragma" content="no-cache">
+
+<!-- Java Script API -->
+
+<script>
+	checkCookie();
+
+	function setCookie(cname, cvalue, exdays) {
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		var expires = "expires=" + d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+
+	function getCookie(cname) {
+		var name = cname + "=";
+		var decodedCookie = decodeURIComponent(document.cookie);
+		var ca = decodedCookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
+	function checkCookie() {	
+		var d = new Date();
+		  //var time = d.toDateString();
+		  var hours = d.getHours();
+		  var amPM = (hours > 11) ? "PM" : "AM";
+		  if(hours > 12) {
+		    hours -= 12;
+		  } else if(hours == 0) {
+		    hours = "12";
+		  }
+		  var time = hours + ' ' + amPM + ', ' + d.toDateString();
+		  
+		var prevDate = getCookie("prevDate");
+		var currDate = getCookie("currDate");
+
+		if ((prevDate == "" || prevDate == undefined || prevDate == null)
+				&& (currDate == "" || currDate == undefined || currDate == null)) {
+			setCookie("prevDate", time, 1);
+			setCookie("currDate", time, 1);
+			window.location.reload(true);
+		} else if (prevDate != "" || prevDate != undefined || prevDate != null) {
+			setCookie("currDate", time, 1);
+			currDate = getCookie("currDate");
+			if (prevDate != currDate) {
+				setCookie("prevDate", time, 1);
+				window.location.reload(true);
+			}
+		}
+	}
+</script>
+
+<script src="views/lib/jquery/jquery.min.js"></script>
+<script src="views/lib/angular/angular.min.js"></script>
+<script src="views/lib/jquery/jquery.dataTables.min.js"></script>
+<script src="views/lib/bootstrap/bootstrap.min.js"></script>
+<script src="views/lib/bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="views/lib/angular/angular-ui-router.min.js"></script>
+<script src="views/lib/angular/ngStorage.min.js"></script>
+<script src="views/lib/common/raphael-2.1.4.min.js"></script>
+
+<script src="views/lib/jquery/jquery-ui.min.js"></script>
+<script src="views/lib/angular/angular-ui-carousel/dist/ui-carousel.js"></script>
+<script src="views/lib/common/lobipanel.js"></script>
+<script src="views/lib/jquery/jquery-sortable.js"></script>
+<script type="text/javascript"
+	src="views/lib/bootstrap/bootstrap-multiselect.js"></script>
+<script src="views/lib/bootstrap/BootSideMenu.js"></script>
+
+
+<link
+	href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css"
+	rel="stylesheet">
+<script
+	src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+<!-- 	PPT generation files -->
+<script src="views/app/ppt/html2canvas.js"></script>
+<script src="views/app/ppt/pptxgen.js"></script>
+<script src="views/app/ppt/pptxgen.masters.js"></script>
+<script src="views/app/ppt/pptxgen.shapes.js"></script>
+<script src="views/app/ppt/promise.min.js"></script>
+<script type="text/javascript" src="views/lib/common/jszip.v0.8.0.js"></script>
+
+<script type="text/javascript">
+	$('[data-toggle="tooltip"]').tooltip();
+</script>
+<!-- CSS API -->
+<link rel="stylesheet" href="views/assets/css/checkbox.min.css">
+<link rel="stylesheet" href="views/assets/css/jquery-ui.min.css" />
+<link rel="stylesheet" href="views/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="views/assets/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="views/assets/css/bootstrap-multiselect.css">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.css"
+	rel="stylesheet" type="text/css" />
+<link rel="stylesheet"
+	href="http://l-lin.github.io/font-awesome-animation/dist/font-awesome-animation.min.css">
+
+<link rel="stylesheet" href="views/assets/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="views/assets/css/lobipanel.min.css" />
+<link rel="stylesheet" href="views/assets/fonts/icomoon_fonts.css" />
+<link rel="stylesheet" href="views/assets/fonts/fontello.css" />
+<link rel="stylesheet" type="text/css"
+	href="views/assets/css/dc.min.css" />
+<link rel="stylesheet"
+	href="views/assets/css/bootstrap-colorpicker.min.css">
+<link
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"
+	rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	href="views/assets/css/BootSideMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="views/assets/css/CustomRadioButtons.css" />
+<link rel="stylesheet" type="text/css"
+	href="views/lib/angular/angular-ui-carousel/dist/ui-carousel.min.css"
+	rel="stylesheet">
+
+
+<!-- Landing Page Data -->
+
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<meta name="keywords" content="">
+<meta property="og:title"
+	content="Landing Page | Landing Page Bootstrap Theme by Bootstrapious.com!">
+<meta property="og:site_name"
+	content="Landing Page | Landing Page Bootstrap Theme by Bootstrapious.com!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="">
+
+<meta property="og:image" content="">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@bootstrapious">
+
+<meta name="robots" content="all,follow">
+<meta name="googlebot" content="index,follow,snippet,archive">
+<meta name="keywords" content="">
+
+<link rel="stylesheet" ng-href="views/assets/css/{{stylePath}}">
+<link rel="stylesheet" href="views/assets/css/commonStyle.css" />
+</head>
+
+<body class="bodyback modal-demo">
+	<div>
+		<div ui-view=""></div>
+	</div>
+</body>
+
+<!-- Custom JS Files -->
+<script src="views/services/api_uri.js"></script>
+<script src="views/app.js"></script>
+<script src="views/app/app_controller.js"></script>
+<script src="views/app/login/loginController.js"></script>
+<script src="views/app/profile/profileController.js"></script>
+<script src="views/app/header/headerController.js"></script>
+<script src="views/app/home/homeController.js"></script>
+<script src="views/app/sidebar/sidebar.ctrl.js"></script>
+<script src="views/lib/uiBreadcrumbs/uiBreadcrumbs.js"></script>
+
+<script src="views/app/land/landing.js"></script>
+
+<!-- CIO Script Files -->
+<script
+	src="views/app/widgets/widgetMenuViews/precriptiveReleaseViewController.js"></script>
+
+<!-- Services -->
+<script src="views/services/login_svc.js"></script>
+<script src="views/services/widget_svc.js"></script>
+<script src="views/services/doodah_svc.js"></script>
+<script src="views/app/home/customWidgetController.js"></script>
+<script src="views/services/customwidget_svc.js"></script>
+<script src="views/app/home/myDashboardController.js"></script>
+<script src="views/services/indexService.js"></script>
+<script src="views/services/homecon_svc.js"></script>
+<script src="views/services/myDashboardCon_svc.js"></script>
+<script src="views/services/common_svc.js"></script>
+<script src="views/services/ganttWidget_svc.js"></script>
+
+<script src="views/app/widgetTemplates/DownloadWidgetsController.js"></script>
+<script src="views/app/SlideShow/WidgetSlideShowController.js"></script>
+
+<script src="views/app/SlideShow/SlideShowModalInstanceController.js"></script>
+
+<script type="text/javascript"
+ src="views/lib/jquery/jquery.csv-0.71.min.js"></script>
+
+<script type="text/javascript"
+ src="views/lib/common/xlsx.full.v0.8.0.min.js"></script>
+
+<script type="text/javascript" src="views/lib/common/jszip.v0.8.0.js"></script>
+
+<script async defer src="https://apis.google.com/js/api.js"
+ onload="this.onload=function(){ console.log('gapi loaded'); };"
+ onreadystatechange="if (this.readyState === 'complete') this.onload();"></script>
+ 
+ 
+ <script type="text/javascript" src="views/lib/bootstrap/bootstrap-colorpicker.min.js"></script>
+
+</html>

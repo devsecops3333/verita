@@ -1,0 +1,319 @@
+<style>
+body.dragging, body.dragging * {
+	cursor: move !important;
+}
+
+.dragged {
+	position: absolute;
+	opacity: 0.5;
+	z-index: 2000;
+}
+</style>
+<div ng-controller="ProfileController as profile" class="row">
+	<div class="container-fluid myDBContainer"></div>
+	<div class="panel">
+		<div class="row">
+			<!-- New UI -->
+			<div
+				class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad">
+
+				<div class="">
+					<div class="panel panel-default">
+
+						<div class="panel-heading col-md-12">
+							<div class="col-sm-6">Personal details</div>
+							<!-- <i class="fa fa-pencil-square-o" aria-hidden="true" style="float: right;" data-toggle="tooltip" title="Edit" id="personalEdit"></i> -->
+							<div class="col-sm-5" align="right">
+								<button type="button" class="btn btn-sm btn-primary"
+									data-toggle="modal" data-target="#changePassModal"
+									id="changePasBtn">Change Password</button>
+							</div>
+							<div align="right" class="col-sm-1">
+								<button class="btn btn-sm btn-primary" type="button"
+									id="personalEdit" style="padding: 4px 14px 5px 15px;">Edit</button>
+								<button class="btn btn-sm btn-primary" type="button"
+									id="savePersonalEdit" ng-click="updatePersonalDetails()"
+									style="padding: 4px 14px 5px 15px; display: none;">Save</button>
+							</div>
+						</div>
+						<div class="row white_row">
+							<form id="personalDetailForm">
+								<div class="col-md-9 col-lg-9">
+									<div class="col-sm-12 mt10">
+										<div class="col-sm-3">
+											<label for="uName" class="control-label black_label">User
+												Name</label>
+										</div>
+										<div class="col-sm-9">
+											<input type="text" name="uName" class="form-control"
+												ng-model="username" disabled>
+										</div>
+									</div>
+
+									<div class="col-sm-12 mt10">
+										<div class="col-sm-3">
+											<label for="eId" class="control-label black_label">Email
+												ID</label>
+										</div>
+										<div class="col-sm-9">
+											<input type="text" name="eId" class="form-control"
+												id="userEmail" ng-model="email" disabled>
+										</div>
+
+										<div id="msg">{{ emailMessage }}</div>
+
+									</div>
+
+								</div>
+
+								<div class="col-md-3 col-lg-3 " align="center">
+									<img alt="User Pic" src="{{userImg}}"
+										class="img-circle img-responsive" id="profileImg">
+								</div>
+
+								<div class="col-md-12 mb10" id="browseImg" align="right"
+									style="display: none;">
+									<input type="file" id="image" class="colorWhite" name="image"
+										accept="image/*">
+									<!-- <font style="color: #737373; font-size: small;"> <b
+										id="text">Image size should be less than 1MB</b>
+									</font>  -->
+									<font color='red' style="font-size: small;"> <b
+										id="imageId" style="display: none;"></b>
+									</font>
+								</div>
+							</form>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="">
+					<div class="panel panel-default">
+
+						<div class="panel-heading col-md-12">
+							<div class="col-sm-6">Default Settings</div>
+
+							<div align="right" class="col-sm-6">
+								<button class="btn btn-sm btn-primary" type="button"
+									id="defaultEdit" style="padding: 1px 9px 1px 9px;">Edit</button>
+								<button class="btn btn-sm btn-primary" type="button"
+									id="saveDefaultEdit" ng-click="updateDefaultSettings()"
+									style="padding: 1px 9px 1px 9px; display: none;">Save</button>
+							</div>
+						</div>
+
+
+						<div class="row white_row">
+
+							<div class="col-md-9 col-lg-9">
+
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-3">
+										<label for="dProject" class="control-label black_label">Default
+											Project</label>
+									</div>
+									<div class="col-sm-9">
+
+										<select ng-model="selectedItem" id="selectProject"
+											class="form-control" disabled
+											ng-change="getDefaultProjectflag()">
+											<option ng-repeat="item in projects" value="{{item.id}}">{{item.name}}</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-3">
+										<label for="dBoard" class="control-label black_label">Default
+											Dashboard</label>
+									</div>
+									<div class="col-sm-9">
+
+										<select ng-model="defaultBoard" id="selectboard"
+											class="form-control" disabled ng-change="getDefaultProject()">
+											<option ng-repeat="item in boards" value="{{item.id}}">{{item.boardName}}</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10" style="margin-top: 14px;">
+									<div class="col-sm-3">
+										<label for="dProject" class="control-label black_label">Landing
+											Theme</label>
+									</div>
+									<div class="col-sm-9">
+										<select ng-model="selectedTheme" id="selectLandingTheme"
+											class="form-control" disabled>
+											<option ng-repeat="item in themeArray" value="{{item.id}}">{{item.name}}</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-3">
+										<label for="role" class="control-label black_label">Role</label>
+									</div>
+									<div class="col-sm-9">
+										<input type="text" name="role" class="form-control"
+											ng-model="user_role" disabled>
+									</div>
+								</div>
+								<div class="col-sm-12 mt10"></div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="">
+					<div class="panel panel-default" id="dashboardDiv">
+
+						<div class="panel-heading col-md-12">
+							<div class="col-sm-6">Dashboard Widget Order Settings</div>
+							<div align="right" class="col-sm-6">
+								<button class="btn btn-sm btn-primary" type="button"
+									id="saveDBWidgetOrder" ng-click="dwUpdateOrder()"
+									style="padding: 1px 9px 1px 9px;">Save</button>
+							</div>
+						</div>
+
+						<div class="row white_row">
+							<div class="col-md-12 mt10">
+								<div class="col-sm-12">
+									<div class="panel with-nav-tabs panel-default panel_color_def">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="">
+					<div class="panel panel-default" id="myDashboardDiv">
+
+						<div class="panel-heading col-md-12">
+							<div class="col-sm-6">MyDashboard Widget Order Settings</div>
+
+							<div align="right" class="col-sm-6">
+								<!-- <button class="btn btn-sm btn-primary" type="button"
+									id="widgetEdit" style="padding: 1px 9px 1px 9px;">Edit</button> -->
+								<button class="btn btn-sm btn-primary" type="button"
+									id="saveMyDBWidgetOrder" ng-click="mdwUpdateOrder()"
+									style="padding: 1px 9px 1px 9px;">Save</button>
+							</div>
+						</div>
+
+						<div class="row white_row">
+							<div class="col-md-9">
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-9">
+										<ol id="mdbWidgetOrder" style="width: 768px;">
+											<li class="dropbtn"
+												ng-repeat=" opt1 in MyDashboardWidgetInfo"
+												data-wId={{opt1.customWidgetOrderNo}}
+												data-cwId={{opt1.customWidgetId}}><i
+												class="fa fa-arrows mRight"></i>{{opt1.widgetName}}</li>
+										</ol>
+									</div>
+
+									<div class="col-sm-3"></div>
+
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="panel-footer"> -->
+
+				<!-- </div> -->
+
+			</div>
+		</div>
+	</div>
+	<div id="changePassModal" class="modal fade" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						ng-click="clearMsg()">&times;</button>
+					<h4 class="modal-title">Change Password</h4>
+				</div>
+				<div class="modal-body">
+					<label class="colorWhite">New Password: </label> <input
+						type="password" ng-model="pwd" id="pwd" required
+						style="margin-left: 30px;"> <i id="infoPwd"
+						class="fa fa-info-circle" aria-hidden="true"
+						title="Password must contain at least one number, one lowercase and one uppercase letter"></i>
+					<div id="pwdMsg">{{ pwdMessage }}</div>
+					<br> <label class="colorWhite">Confirm Password: </label> <input
+						type="password" ng-model="cpwd" id="cpwd" required
+						style="margin-left: 8px;">
+					<div id="cpwdMsg">{{ cpwdMessage }}</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" id="updatepasswrd"
+						ng-click="updatePwd()">Ok</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div id="successModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-body">
+					<h4 class="modal-title colorWhite">Password Changed
+						Successfully!</h4>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" data-dismiss="modal"
+						ng-click="logout()">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="ordersModal" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-body">
+					<h4 class="modal-title" id="orderMsg">{{message}}</h4>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit Modal -->
+
+	<div class="modal fade" id="defaultUpdateModal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title"></h4>
+				</div> -->
+				<div class="modal-body">
+					<label id="displayText"></label>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+
+
+	</div>

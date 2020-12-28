@@ -1,0 +1,29 @@
+
+<div class="modal-body slideShowContainer" id="modal-body">
+
+	<ui-carousel slides="slides" slides-to-show="1" slides-to-scroll="1"
+		initial-slide="0" autoplay="autoplay" fade="false"
+		autoplay-speed="autoplaySpeed" speed="1000" infinite="true"
+		dots="true" on-init="onCarouselInit()"
+		on-before-change="onCarouselBeforeChange(currentSlide)"
+		on-after-change="onCarouselAfterChange(currentSlide)"> <carousel-item>
+	<div>
+		<!-- <h3>{{ item.id }}</h3> -->
+		<!-- <img ng-src="{{item.image}}" style="margin:auto;"> -->
+		<div class="carouselChartDiv"
+			ng-class="[item.template, item.slideorder]"></div>
+	</div>
+	</carousel-item> <!-- For customize carousel next, previous button --> <carousel-prev>
+	<button class="carousel-btn">
+		<i class="fa fa-chevron-left" aria-hidden="true"></i>
+	</button>
+	</carousel-prev> <carousel-next>
+	<button class="carousel-btn">
+		<i class="fa fa-chevron-right" aria-hidden="true"></i>
+	</button>
+	</carousel-next> </ui-carousel>
+</div>
+<!-- <div class="modal-footer">
+              <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+              <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+          </div> -->

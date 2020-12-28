@@ -1,0 +1,966 @@
+<style>
+body {
+	padding-right: 0px !important;
+}
+
+.modal-open, .modal-open .navbar-fixed-top {
+	padding-right: 0 !important;
+}
+
+#errortext {
+	color: red;
+	font-weight: bolder;
+	text-align: center;
+}
+
+#errortextForValueTemplate {
+	color: red;
+	font-weight: bolder;
+	text-align: center;
+}
+</style>
+
+<div class="row">
+	<div class="container-fluid homeContainer modal-parent"
+		id="homeContainer">
+		<div class="row">
+			<div class="col-md-12 widgetDiv" align="center"
+				ng-show="userData==='No'">
+				<h4>
+					<span class="label label-warning">No Data Found</span>
+				</h4>
+			</div>
+		</div>
+
+		<!-- Filter Model -->
+		<div id="filterModel" class="modal fade" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							ng-click="closeBtn()">&times;</button>
+						<h4 class="modal-title colorWhite">Data Grid</h4>
+					</div>
+					<div class="modal-body" style="overflow: auto;">
+						<div class="col-md-12 col-xs-12">
+							<div id="filterDiv"></div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- DrillDown Model -->
+		<div id="drillDownModel" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title colorWhite">Data</h4>
+					</div>
+					<div class="modal-body" style="overflow: auto;">
+						<div class="col-md-9 col-sm-9 col-xs-9" id="drillDownDiv"
+							style="overflow: auto;"></div>
+						&nbsp;&nbsp; <a id="filter-toggle" data-name="show"><i
+							class="fa fa-bars barcolor"></i></a>
+
+						<div class="col-md-3 col-sm-3 col-xs-3">
+							<div class="col-md-6 col-sm-6 col-xs-6"></div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<input type="button" name="resetAll" id="resetAll"
+									value="Clear All" class="clearAllclass btn btn-primary"><br>
+								<br>
+							</div>
+							<div class="col-md-12 col-sm-12 col-xs-12"
+								id="entireDrillDownData">
+								<div class="panel-group" id="sprintProgresAccordin1"></div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<script type="text/javascript" src="views/lib/dc/d3.js"></script>
+			<script type="text/javascript" src="views/lib/dc/crossfilter.js"></script>
+			<script type="text/javascript" src="views/lib/dc/dc-gazal.js"></script>
+			<script type='text/javascript' src='views/lib/dc/queue.js'></script>
+			<script type='text/javascript' src='views/lib/common/reductio.min.js'></script>
+			<script type="text/javascript" src="views/lib/dc/liquidFillGauge.js"></script>
+			<script type="text/javascript" src="views/lib/dc/powerGauge.js"></script>
+			<script src="views/lib/bootstrap/bootstrap-colorpicker.min.js"></script>
+		</div>
+
+		<div id="existWidgetModal" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<form name="home" role="form">
+						<div class="modal-body">
+							<h4 class="modal-title colorWhite">Widget Already Exits. Do
+								you want to over write?</h4>
+							<input type="text" id="newwidgetname" class="form-control"
+								ng-model="newWidgetName" value="" ng-show="button==='new'"
+								placeholder="Please Enter the Widget name">
+							<p ng-show="msg==='errormsg'" style="color: red;">Please
+								Enter the Widget name</p>
+							<p ng-show="msg==='exists'" style="color: red;">Widget
+								Already Exists</p>
+							<br>
+							<div align="right">
+
+								<button type="submit" class="btn btn-primary btn-sm"
+									ng-show="button==='new'" ng-click="saveNewWidget()">
+									Ok</button>
+
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary btn-block"
+								ng-click="overWriteWidget()" ng-disabled="overRideBtn">Over
+								Write</button>
+							<br>
+							<button type="button" class="btn btn-primary btn-block"
+								ng-click="createNewWidget()">Create New</button>
+							<br>
+							<button type="button" class="btn btn-primary btn-block"
+								data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+		<div id="addDeleteWidgetModal" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-body">
+						<h4 class="modal-title colorWhite">Widget Added To
+							MyDashboard.</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary"
+							ng-click="closepopup()">OK</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div id="succWidgetModal" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-body">
+						<h4 class="modal-title colorWhite">Widget Edited
+							Successfully.</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary"
+							ng-click="drawFinalChart()">OK</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div id="succWidgetModalForValueTemplate" class="modal fade"
+			tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-body">
+						<h4 class="modal-title colorWhite">Widget Edited
+							Successfully.</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary"
+							ng-click="drawEditedValueTemplate()">OK</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="myDoodahModel" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title colorWhite" id="myModalLabel">Edit
+							{{widgetTitle}}</h4>
+					</div>
+
+					<!-- Modal Body -->
+					<div class="modal-body" style="height: 480px; overflow: auto;">
+
+						<!-- <form class="form-horizontal" role="form"> -->
+						<div class="row form-horizontal">
+							<div class="col-md-6">
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Widget Name</label>
+									</div>
+									<div class="col-sm-8">
+										<input class="form-control" type="text" size="40"
+											placeholder="Enter Widget Name" name="widgetname"
+											id="widgetname" ng-model="widgetTitle" value="" />
+
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Chart Type</label>
+									</div>
+									<div class="col-sm-8">
+
+										<select ng-model="chartType" class="form-control"
+											name="chartType" id="chartType" ng-change="changeChartType()">
+
+											<option value="lineChart">Line Chart</option>
+											<option value="barChart">Bar Chart</option>
+											<option value="areaChart">Area Chart</option>
+											<option value="pieChart">Pie Chart</option>
+											<option value="scatterChart">Scatter Chart</option>
+											<option value="gaugeChart">Gauge Chart</option>
+											<option value="stackedChart">Stacked Bar Chart
+												(single group)</option>
+											<option value="stackedMultiChart">Stacked Bar Chart
+												(multi group)</option>
+											<option value="stackedSingleClustered">Stacked Bar
+												Clusterd Chart (single group)</option>
+											<option value="stackedMultiClustered">Stacked Bar
+												Clustered Chart(multi group)</option>
+											<option value="stackedLineMultiChart">Stacked Line
+												Chart (multi group)</option>
+											<option value="stackedAreaMultiChart">Stacked Area
+												Chart (multi group)</option>
+										</select>
+									</div>
+								</div>
+
+
+								<!-- Except gauge Chart, Remaining all other Charts options -->
+
+								<div class="col-sm-12 mt10" ng-show="chartType!=='gaugeChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Select X Axis</label>
+									</div>
+									<div class="col-sm-8">
+										<select ng-model="xAxis" class="form-control" name="xAxis"
+											id="xAxis" ng-change="changegroupbyAndXaxis(xAxis)">
+											<option ng-repeat="option in dataOptions"
+												value="{{option.value}}">{{option.key}}</option>
+										</select>
+									</div>
+								</div>
+
+
+								<!-- Except gauge and pie Chart, Remaining all other Charts options -->
+
+
+								<div class="col-sm-12 mt10"
+									ng-show="chartType!=='gaugeChart' && chartType!=='pieChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">X Axis Label</label>
+									</div>
+									<div class="col-sm-8">
+										<input class="form-control" type="text" size="40"
+											placeholder="Enter X Axis Label" name="xaxislabel"
+											id="xaxislabel" ng-model="xAxisLabel" value="" />
+									</div>
+								</div>
+
+								<div ng-show="xAxisDataTypeForSlide">
+									<div class="col-sm-12 mt10"
+										ng-show="chartType!=='gaugeChart' && chartType!=='pieChart'">
+										<div class="col-sm-4 mTopMini">
+											<label class="control-label">X Axis Data Type</label>
+										</div>
+										<div class="col-sm-8">
+											<select class="form-control" name="xColumndatatype"
+												id="xColumndatatype" ng-model="xdatatype"
+												ng-change="onxaxisDatatype(xdatatype)">
+												<option value="">Select X-Axis Data Type</option>
+												<option value="Number">Number</option>
+												<option value="String">String</option>
+												<option value="Date">Date</option>
+												<option value="DateandTime">Date And Time</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-12 mt10" ng-show="dateandtimeformat">
+										<div class="col-sm-4 mTopMini">
+											<label class="control-label">Date and Time Format</label>
+										</div>
+										<div class="col-sm-8">
+											<div class="col-xs-6" style="padding: 0px 2px 0px 0px;">
+												<select class="form-control" name="dateformat"
+													id="dateformat" ng-model="dateformatselect">
+													<option value="">Select Date Format</option>
+													<option value="%Y-%m-%d">yyyy-MM-dd</option>
+													<option value="%m/%d/%Y">MM/dd/yyyy</option>
+													<option value="%d/%m/%Y">dd/MM/yyyy</option>
+													<option value="%m-%d-%Y">MM-dd-yyyy</option>
+													<option value="%d-%m-%Y">dd-MM-yyyy</option>
+													<option value="%m.%d.%Y">MM.dd.yyyy</option>
+													<option value="%d.%m.%Y">dd.MM.yyyy</option>
+												</select>
+											</div>
+											<div class="col-xs-6" style="padding: 0px 0px 0px 2px;">
+												<select class="form-control" name="timeformat"
+													id="timeformat" ng-model="timeformatselect">
+													<option value="">Select Time Format</option>
+													<option value="0">HH:mm:ss</option>
+													<option value="1">HH:mm</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12 mt10" ng-show="dateformat">
+										<div class="col-sm-4 mTopMini">
+											<label class="control-label">Date Format</label>
+										</div>
+										<div class="col-sm-8">
+											<select class="form-control" name="dateformat"
+												id="dateformat" ng-model="dateformatselect">
+												<option value="">Select Date Format</option>
+												<option value="%Y-%m-%d">yyyy-MM-dd</option>
+												<option value="%m/%d/%Y">MM/dd/yyyy</option>
+												<option value="%d/%m/%Y">dd/MM/yyyy</option>
+												<option value="%m-%d-%Y">MM-dd-yyyy</option>
+												<option value="%d-%m-%Y">dd-MM-yyyy</option>
+												<option value="%m.%d.%Y">MM.dd.yyyy</option>
+												<option value="%d.%m.%Y">dd.MM.yyyy</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<!-- Except gauge and pie Chart, Remaining all other Charts options -->
+
+								<div class="col-sm-12 mt10"
+									ng-show="chartType!=='gaugeChart' && chartType!=='pieChart'">
+									<label class="col-sm-4 mTopMini control-label" for="xAxisLabel">X
+										Axis Tick Text Length</label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" id="xAxisticklength"
+											placeholder="X Axis Tick Text Length"
+											ng-model="xAxisticklength" /> <label id="subtext">length
+											should be between 0 to 100</label><br>
+									</div>
+								</div>
+
+								<!-- Except gauge Chart, Remaining all other Charts options -->
+
+								<div class="col-sm-12 mt10" ng-show="xaggregationfromAll">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">X - Aggregation</label>
+									</div>
+									<div class="col-sm-8">
+										<div>
+											<label class="control-label"> <input type="radio"
+												name="xAggrFunc" value="count" ng-model="aggregation">
+												Count &nbsp;&nbsp;
+											</label> <label ng-show="aggregNone" class="control-label"> <input
+												type="radio" name="xAggrFunc" value="" checked
+												ng-model="aggregation"> None &nbsp;&nbsp;
+											</label>
+										</div>
+									</div>
+								</div>
+
+
+								<!-- If  X - Aggregation is not Count -->
+
+
+								<div ng-show="yaxishideorshow">
+									<div ng-show="aggregation !== 'count'">
+										<div class="col-sm-12 mt10">
+											<div class="col-sm-4 mTopMini">
+												<label class="control-label">Select Y Axis</label>
+											</div>
+											<div class="col-sm-8">
+												<select class="form-control" name="yColumn" id="yColumn"
+													ng-model="yAxis" ng-change="onyaxischange()">
+													<option ng-repeat="option in dataOptions"
+														value="{{option.value}}">{{option.key}}</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-sm-12 mt10" ng-show="chartType!=='pieChart'">
+											<div class="col-sm-4 mTopMini">
+												<label class="control-label">Y Axis Label</label>
+											</div>
+											<div class="col-sm-8">
+												<input class="form-control" type="text" size="40"
+													placeholder="Enter Y Axis Label" name="yaxislabel"
+													id="yaxislabel" ng-model="yAxisLabel" value="" />
+											</div>
+										</div>
+
+										<div class="col-sm-12 mt10">
+											<div class="col-sm-4 mTopMini">
+												<label class="control-label">Y - Aggregation</label>
+											</div>
+											<div class="col-sm-8">
+												<div>
+													<input type="radio" name="yAggrFunc" value="sum"
+														ng-model="yAggregation"> <label
+														class="control-label">Sum</label> &nbsp;&nbsp; <input
+														type="radio" name="yAggrFunc" value="count"
+														ng-model="yAggregation"><label
+														class="control-label">Count</label> &nbsp;&nbsp; <input
+														type="radio" name="yAggrFunc" value="avg"
+														ng-model="yAggregation"><label
+														class="control-label">Avg</label> &nbsp;&nbsp;
+
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Single Group Charts -->
+
+								<div class="col-sm-12 mt10"
+									ng-show="chartType==='stackedChart' || chartType==='stackedSingleClustered'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Group By</label>
+									</div>
+									<div class="col-sm-8">
+										<select class="form-control" name="groupBy" id="groupBy"
+											ng-model="groupBy" ng-change='changegroupbyAndXaxis(groupBy)'>
+											<option ng-repeat="option in dataOptions"
+												value="{{option.value}}">{{option.key}}</option>
+										</select>
+									</div>
+								</div>
+
+								<!-- Multi Group Charts -->
+
+								<div class="col-sm-12 mt10">
+									<div class="row mTopMini mLeft15"
+										ng-show="chartType==='stackedMultiChart' || chartType==='stackedMultiClustered' || chartType==='stackedLineMultiChart' || chartType==='stackedAreaMultiChart'">
+
+										<div class="input-group control-group after-add-more">
+
+											<div class="input-group-btn">
+												<button class="btn btn-success add-more" type="button"
+													ng-click='add()'>
+													<i class="glyphicon glyphicon-plus"></i> Add Groups
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="row mTopMini">
+
+										<div ng-repeat='groupbymulti in items'
+											ng-show="chartType==='stackedMultiChart' || chartType==='stackedMultiClustered' || chartType==='stackedLineMultiChart' || chartType==='stackedAreaMultiChart'">
+											<div class="col-sm-4 mTopMini">
+												<span class="label label-primary reprtsTitle">Group
+													{{$index + 1}}</span>
+											</div>
+											<div class="col-sm-8">
+												<div class="col-md-10" style="padding: 0px;">
+													<select class="form-control" name="groupBy{{$index}}"
+														id="groupbymulti{{$index}}" ng-model="groupBy2"
+														ng-change='changegroupbyAndXaxis("stack")'>
+														<option ng-repeat="option in dataOptions"
+															value="{{option.value}}">{{option.key}}</option>
+													</select>
+												</div>
+												<div class="col-md-2" style="padding-top: 2%;">
+													<i class="fa fa-trash-o" style="font-size: 20px;"
+														aria-hidden="true" ng-click='del($index)'></i> <br> <br>
+												</div>
+											</div>
+											<div ng-show="trendlineforstacked">
+												<div class="col-sm-12"
+													ng-show="chartType==='stackedMultiChart'||chartType==='stackedMultiClustered'">
+													<div class="col-sm-4 mTopMini"></div>
+													<div class="col-sm-8 mTopMini">
+														<label class="control-label colorWhite">Need Trend
+															Line ?</label> &nbsp; <input type="radio"
+															name="trndline{{$index}}" value="yes"
+															id="groupbymultiTrend{{$index}}" /><label
+															class="control-label colorWhite"> Yes</label> &nbsp; <input
+															type="radio" name="trndline{{$index}}" value="no"
+															id="groupbymultiTrend{{$index}}" checked="checked" /><label
+															class="control-label colorWhite"> No</label> <br>
+														<div>
+															<label class="control-label colorWhite">Color</label>
+															&nbsp;
+															<div class="cp input-group colorpicker-component"
+																id="cPickerLineTrend{{$index}}" style="width: 71%;">
+																<input type="text" ng-model="colorVar"
+																	class="form-control textColorsArray"
+																	id="colorLineTrend{{$index}}" /> <span
+																	class="input-group-addon"><i></i></span>
+															</div>
+														</div>
+														<br>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+
+								<!-- Gauge Chart options -->
+
+								<div class="col-sm-12 mt10" ng-show="chartType==='gaugeChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Gauge Types</label>
+									</div>
+									<div class="col-sm-8">
+										<select class="form-control" name="gaugeChartType"
+											ng-model="gaugeTypeHome">
+											<option value="powerGauge">Power Gauge</option>
+											<option value="liquidGauge">Liquid fill Gauge Chart</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10" ng-show="chartType==='gaugeChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Select column</label>
+									</div>
+									<div class="col-sm-8">
+										<select ng-model="gaugeColumn" class="form-control"
+											name="gColumn" id="gColumn">
+											<option ng-repeat="option in dataOptions"
+												value="{{option.value}}">{{option.key}}</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10" ng-show="chartType==='gaugeChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Aggregation</label>
+									</div>
+									<div class="col-sm-8">
+										<div>
+											<input ng-model="gAggregationHome" type="radio"
+												name="gAggrFunc" value="sum" checked> <label
+												class="control-label">Sum</label> &nbsp;&nbsp; <input
+												ng-model="gAggregationHome" type="radio" name="gAggrFunc"
+												value="count"> <label class="control-label">Count</label>
+
+											&nbsp;&nbsp; <input ng-model="gAggregationHome" type="radio"
+												name="gAggrFunc" value="avg"> <label
+												class="control-label">Avg</label> &nbsp;&nbsp;
+										</div>
+										<b><span id='selAggrHM'></span></b><span id='selAggrValHM'></span>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt10" ng-show="chartType==='gaugeChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Max value</label>
+									</div>
+									<div class="col-sm-8">
+										<input name="maxGuageValue" id="maxGuageValue"
+											class="form-control" size="40" ng-model="maxValue.value"
+											value="{{maxValue.value}}" /><label id="subtext">(to
+											calculate the percentage)</label>
+									</div>
+								</div>
+
+								<!-- common options -->
+
+								<div class="col-sm-12 mt10">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Chart Summary</label>
+									</div>
+									<div class="col-sm-8">
+										<input class="form-control" type="text" size="40"
+											placeholder="Enter Your Chart Summary" name="rest_api"
+											id="rest_api" ng-model="chartSummary" value="" />
+									</div>
+								</div>
+
+								<!-- only Pie chart -->
+
+								<div class="col-sm-12 mt10" ng-show="chartType=='pieChart'">
+									<label class="col-sm-4 mTopMini"></label>
+									<div class="col-sm-8">
+										<input ng-model="valueOrPercentage.check" type="radio"
+											name="valueOrPercentage" value="percentage" checked>
+										<label class="control-label">Percentage</label> &nbsp;&nbsp; <input
+											ng-model="valueOrPercentage.check" type="radio"
+											name="valueOrPercentage" value="Value"> <label
+											class="control-label">Value</label>
+
+									</div>
+								</div>
+								<!-- rotate labels and show values -->
+								<div class="col-sm-12 mt10"
+									ng-show="chartType!=='pieChart' && chartType!=='gaugeChart'">
+									<label class="col-sm-4 mTopMini"></label>
+									<div class="col-sm-8 mTopMini">
+										<label class="control-label">Rotate labels</label> <input
+											type="checkbox" name="rotateLabels" value="false"
+											ng-model="rLable" />
+									</div>
+								</div>
+
+								<!-- Trend Line for bar chart -->
+								<div ng-show="trendLineforchart">
+									<div class="col-sm-12 mt10"
+										ng-show="chartType==='barChart'|| chartType==='stackedChart'">
+										<div class="col-sm-4 mTopMini"></div>
+										<div class="col-sm-8 mTopMini">
+											<label class="control-label">Trend Line</label> <input
+												type="checkbox" name="trndline" value="false" id="trndline"
+												ng-model="trendLine" ng-change="trendlineOnchange()" />
+										</div>
+									</div>
+
+									<div class="col-sm-12 mt10" ng-show="trendLineShow">
+										<div class="col-sm-4 mTopMini">
+											<label class="control-label colorWhite">Trend Line
+												Color</label>
+										</div>
+										<div class="col-sm-8">
+											<div class="cp input-group colorpicker-component"
+												id="cPickerLine1">
+												<input type="text" ng-model="colorVar"
+													class="form-control textColorsArray" id="colorLine1" /> <span
+													class="input-group-addon"><i></i></span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-12 mt10"
+									ng-show="chartType!=='pieChart' && chartType!=='gaugeChart'">
+									<label class="col-sm-4 mTopMini"></label>
+									<div class="col-sm-8 mTopMini">
+										<label class="control-label">Show values</label> <input
+											type="checkbox" name="showLabels" value="false"
+											ng-change="showValueLabels()" ng-model="showLabels" />
+									</div>
+								</div>
+								<!-- Legend Position-->
+
+								<div class="col-sm-12 mt10"
+									ng-show="chartType==='stackedChart'||chartType==='stackedMultiChart'||chartType==='stackedMultiClustered'||chartType==='pieChart'||chartType==='stackedSingleClustered'||chartType==='stackedLineMultiChart'||chartType==='stackedAreaMultiChart'">
+									<div class="col-sm-4 mTopMini">
+										<label class="control-label">Legend Position</label>
+									</div>
+									<div class="col-sm-8">
+										<div>
+											<input ng-change="changeLegendPos()" type="radio"
+												name="Top Left" value="Top Left" checked
+												ng-model="legendPos"><label class="control-label">Top
+												Left</label> &nbsp;&nbsp; <input ng-change="changeLegendPos()"
+												type="radio" name="Bottom Left" value="Bottom Left"
+												ng-model="legendPos"><label class="control-label">Bottom
+												Left</label> &nbsp;&nbsp;
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div id="TextBoxesGroup"></div>
+									<div class="col-sm-12 mTop" align="right"></div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-offset-9 col-sm-3">
+										<button type="button" class="btn btn-primary"
+											ng-click="drawChart()" ng-disabled='previewbutton'>Preview</button>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6" id="panel">
+								<div class="row mTop20" ng-show="showChart">
+									<div id="sDChart"
+										style="width: 40%; height: 450px; position: fixed;"></div>
+									<div id='gaChart'
+										style="display: none; position: fixed; width: 40%;">
+
+										<svg id="fillgauge" width="100%" height="300px"
+											style="display: block;"></svg>
+										<div id="power-gauge" style="display: none;"></div>
+									</div>
+								</div>
+								<p ng-show='errortext' id='errortext'>Please select the
+									appropriate for ploting the chart</p>
+							</div>
+						</div>
+						<!-- </form> -->
+
+					</div>
+
+					<!-- Modal Footer -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">
+							Close</button>
+						<button type="button" class="btn btn-primary" id="saveBtn"
+							ng-click="saveToDB()">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 		 Edit functionality for Value templates -->
+
+		<div class="modal fade" id="valueTemplateModel" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span> <span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title colorWhite" id="myModalLabel">Edit :
+							{{widgetTitle}}</h4>
+					</div>
+
+					<!-- Modal Body -->
+					<div class="modal-body"
+						style="height: 480px; overflow: auto; padding: 4px;">
+						<div class="row form-horizontal">
+							<div class="col-md-6 borderRight">
+								<!-- 							Widget Name -->
+								<div class="col-sm-12">
+									<div class="col-sm-4">
+										<label class="control-label control-label1">Widget
+											Name</label>
+									</div>
+									<div class="col-sm-8">
+										<input class="form-control form-control_dup" type="text"
+											size="40" placeholder="Enter Widget Name" name="widgetname"
+											id="valueTempWidgetname" ng-model="widgetTitle" value=""
+											style="font-weight: bold; border: none;" />
+									</div>
+								</div>
+
+								<!-- 								Header Font Color -->
+								<div class="col-sm-12 mt6 dashedBorderLine div1BGC">
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-12">
+											<label class="control-label control-label1 dashedLine">Title
+												Details</label>
+										</div>
+									</div>
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-4">
+											<label class="control-label control-label1 colorWhite">Font
+												Color</label>
+										</div>
+										<div class="col-sm-8">
+											<div
+												class="titleColorCP cp input-group colorpicker-component"
+												id="cPickerLineForTemplateTitle">
+												<input type="text" ng-model="colorVarForTemplateTitle"
+													class="form-control form-control_dup textColorsArray"
+													id="titleColor" /> <span
+													class="input-group-addon input-group-addon1"><i></i></span>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-4">
+											<label class="control-label control-label1 colorWhite">Font
+												Size</label>
+										</div>
+										<div class="col-sm-8">
+											<input type="text" class="form-control form-control_dup"
+												id="titleFont" placeholder="Enter Font Size"
+												ng-model="titleFontSize" /> <label id="titleSubFont"
+												class="subFont">Size should be between 0 to 50</label><br>
+										</div>
+									</div>
+
+									<!-- 								Value Font Color -->
+									<div class="col-sm-12" style="padding: 0px;">
+										<div class="col-sm-12">
+											<label class="control-label control-label1 dashedLine">Value
+												Details</label>
+										</div>
+									</div>
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-4">
+											<label class="control-label control-label1 colorWhite">Font
+												Color</label>
+										</div>
+										<div class="col-sm-8">
+											<div
+												class="titleColorCP cp input-group colorpicker-component"
+												id="cPickerLineForTemplateValue">
+												<input type="text" ng-model="colorVarForTemplateValue"
+													class="form-control  form-control_dup textColorsArray"
+													id="valueColor" /> <span
+													class="input-group-addon input-group-addon1"><i></i></span>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-4">
+											<label class="control-label control-label1 colorWhite">Font
+												Size</label>
+										</div>
+										<div class="col-sm-8">
+											<input type="text" class="form-control form-control_dup"
+												id="valueFont" placeholder="Enter Font Size"
+												ng-model="valueFontSize" /> <label id="valueSubFont"
+												class="subFont">Size should be between 0 to 50</label><br>
+										</div>
+									</div>
+
+									<!-- 									Background Color -->
+									<div class="col-sm-12" style="padding: 0px;">
+										<div class="col-sm-12">
+											<label class="control-label control-label1 dashedLine">Background
+												Color Details</label>
+										</div>
+									</div>
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-4">
+											<label class="control-label control-label1 colorWhite">
+												Color</label>
+										</div>
+										<div class="col-sm-8">
+											<div
+												class="titleColorCP cp input-group colorpicker-component"
+												id="cPickerLineForTemplateBGColor">
+												<input type="text" ng-model="colorVarForTemplateBGColor"
+													class="form-control form-control_dup textColorsArray"
+													id="templateBGColor" /> <span
+													class="input-group-addon input-group-addon1"><i></i></span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- 								Image Type Selection  -->
+								<div class="col-sm-12 mt10 dashedBorderLine div1BGC">
+									<div class="col-sm-12 mt6">
+										<div class="col-sm-4 mTopMini">
+											<label class="control-label control-label1">Image
+												Type</label>
+										</div>
+										<div class="col-sm-8">
+											<div>
+												<label class="control-label control-label1"
+													style="font-size: 14px;"> <input type="radio"
+													name="imageType" value="font_awesome" ng-model="imageType">
+													Font Awesome &nbsp;
+												</label> <label class="control-label control-label1"
+													style="font-size: 14px;"> <input type="radio"
+													name="imageType" value="image_upload" ng-model="imageType">
+													Image Upload &nbsp;&nbsp;
+												</label>
+											</div>
+										</div>
+									</div>
+									<!-- 								Icons for data -->
+									<div class="col-sm-12 mt6 mb10 valueTemplateIcons1">
+										<div ng-repeat='templateValue in valueTemplateItems'>
+											<div class="col-sm-12 mt10">
+												<div class="col-sm-4">
+													<label
+														class="control-label control-label1 colorWhite templateFontSize">
+														{{templateValue}}</label>
+												</div>
+												<div class="col-sm-8" ng-show="imageType==='image_upload'">
+													<div class="col-sm-9">
+														<input class="templateImageFontSize color"
+															ng-model="image" id="valueTemplateImage{{$index}}"
+															onchange="angular.element(this).scope().changeForValueTemplateImage(this,angular.element(this).scope().$index)"
+															type="file" accept="image/*" />
+													</div>
+													<div class="col-sm-3" align="center">
+														<img ng-src="valueTemplatePhotoPath{{$index}}"
+															class="imageWH img-circle img-responsive"
+															id="valueTemplatePhoto{{$index}}"
+															style="margin-top: -8px;">
+													</div>
+												</div>
+												<div class="col-sm-8 valueTemplateIcons"
+													ng-show="imageType==='font_awesome'">
+													<div class="col-sm-7 templatePadding">
+														<input type="text"
+															class="form-control form-control_dup templateFontSize fontAwesomeIcon"
+															id="fontAwesomeIcon{{$index}}" value="fa fa-circle-o" />
+													</div>
+													<div
+														class="col-sm-5 titleColorCP1 cp input-group colorpicker-component"
+														id="colorVal{{$index}}">
+														<input type="text"
+															class="fontAwesomeValueColor form-control form-control_dup textColorsArray templateFontSize1"
+															id="fontAwesomeValueColor{{$index}}" value="#a39f9f" />
+														<span class="input-group-addon input-group-addon1"><i></i></span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- 								Preview Button -->
+								<div class="form-group">
+									<div class="col-sm-offset-9 col-sm-3 mTop20">
+										<button type="button" class="btn btn-primary"
+											ng-click="drawValueTemplate()" ng-disabled='previewbutton'>Preview</button>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6" id="panelTemplate">
+								<div class="row mTop20 valueTempWidget"
+									ng-show="showValueTemplate">
+									<div id="valueTemplateId" style=""></div>
+								</div>
+								<p ng-show='errortextForValueTemplate'
+									id='errortextForValueTemplate'>Please select the
+									appropriate for drawing the Template</p>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- Modal Footer -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">
+							Close</button>
+						<button type="button" class="btn btn-primary" id="saveTemplateBtn"
+							ng-click="saveValueTemplateToDB()">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Code from mydashboard.hmtl -->
+		<div id="deleteCustWidgetModal" class="modal fade" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-body">
+						<h4 class="modal-title colorWhite">Do You Want to Delete This
+							Widget?</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-primary"
+							ng-click="removeWidgetFromDB()">OK</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!-- Till Here -->
+	</div>
+</div>
